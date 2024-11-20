@@ -86,50 +86,57 @@ async function callGPT(prompt) {
 
 // 질문 생성 로직
 async function loadQuestions() {
-  for (const item of quizData) {
-    const prompt = `
-      당신은 퀴즈를 만드는 전문가입니다. 아래의 예술작품에 대해 퀴즈를 만들어 주세요.
-      요구사항:
-      1. 질문은 완성된 문장으로 작성해 주세요.
-      2. 정답을 포함한 총 3개의 선택지를 제공해 주세요.
-      3. 정답은 항상 무작위의 선택지에 위치해 있어야 합니다.
-
-      예술작품: ${item.prompt}
-      작품과 관련된 문제를 작성하고, 아래의 형식에 맞게 답변을 반환하세요:
-
-      질문: [질문을 입력하세요]
-      - [선택지 1]
-      - [선택지 2]
-      - [선택지 3]
-    `;
-
-    const questionContent = await callGPT(prompt);
-
-    if (questionContent) {
+    const usedPrompts = new Set(); // 사용된 프롬프트를 추적
+  
+    for (const item of quizData) {
+      let questionContent = null;
+  
+      // 중복되지 않는 질문 생성
+      while (!questionContent || usedPrompts.has(questionContent)) {
+        const prompt = `
+          당신은 예술작품 퀴즈를 만드는 전문가입니다. 아래의 작품에 대해 다양한 주제를 포함한 퀴즈를 만들어 주세요.
+  
+          요구사항:
+          1. 질문은 완성된 문장으로 작성하세요.
+          2. 질문은 아래의 주제 중 하나와 관련이 있어야 합니다:
+             - 작품의 제작 이유 또는 배경
+             - 작품의 작가와 그의 생애
+             - 작품의 시대적 특징
+             - 작품과 관련된 역사적 사건
+          3. 정답을 포함한 총 3개의 선택지를 제공해 주세요.
+          4. 정답은 항상 무작위의 선택지에 위치해 있어야 합니다.
+  
+          예술작품: ${item.prompt}
+          퀴즈 형식은 다음과 같아야 합니다:
+  
+          질문: [질문을 입력하세요]
+          - [선택지 1]
+          - [선택지 2]
+          - [선택지 3]
+        `;
+  
+        questionContent = await callGPT(prompt);
+      }
+  
+      usedPrompts.add(questionContent); // 질문을 사용된 목록에 추가
+  
       const parsed = questionContent.split('\n');
       const question = parsed[0].replace('질문: ', '').trim();
       const options = parsed.slice(1, 4).map(opt => opt.replace(/^[-•]\s*/, '').trim());
-
+  
       shuffleArray(options); // 선택지를 섞음
-
+  
       questions.push({
         question,
         options,
         correctAnswerIndex: options.indexOf(parsed[1].replace(/^[-•]\s*/, '').trim()), // 정답 인덱스
         image: item.image,
       });
-    } else {
-      questions.push({
-        question: '질문 생성에 실패했습니다.',
-        options: ['다시 시도', '오류 발생', 'API 확인'],
-        correctAnswerIndex: 0,
-        image: '',
-      });
     }
+  
+    loadQuestion(); // 첫 번째 질문 로드
   }
-
-  loadQuestion(); // 첫 번째 질문 로드
-}
+  
 
 // 배열 섞기 함수
 function shuffleArray(array) {
