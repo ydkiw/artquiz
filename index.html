@@ -44,9 +44,62 @@
     .right-section { flex: 3; padding: 20px; }
     .question-box { background-color: #333; color: white; padding: 15px; border-radius: 8px; font-size: 18px; line-height: 1.6; }
     .choices { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-    .choices button { padding: 15px; font-size: 16px; background-color: #444; color: white; border: none; border-radius: 5px; cursor: pointer; transition: 0.3s; }
-    .choices button.correct { animation: correctEffect 2s ease-out forwards; }
-    .choices button.wrong { animation: wrongEffect 0.6s ease-out, shake 0.4s ease; }
+    
+.choices button {
+  padding: 15px;
+  font-size: 16px;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+/* 정답 효과: 하얗게 빛나고 초록 드롭섀도우 */
+@keyframes correctEffect {
+  0% {
+    background-color: white;
+    color: #444;
+    box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.7);
+  }
+  100% {
+    background-color: #4caf50; /* 초록색 */
+    color: white;
+    box-shadow: 0 0 0 0 rgba(0, 255, 0, 0);
+  }
+}
+
+/* 오답 효과: 빨간 테두리 및 흔들림 */
+@keyframes wrongEffect {
+  0% {
+    box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.choices button.correct {
+  animation: correctEffect 2s ease-out forwards;
+}
+
+.choices button.wrong {
+  animation: wrongEffect 0.6s ease-out, shake 0.4s ease;
+}
+
+
 
     /* 카운트다운 오버레이 */
     #countdown-overlay {
