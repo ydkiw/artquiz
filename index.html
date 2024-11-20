@@ -44,7 +44,7 @@
     .right-section { flex: 3; padding: 20px; }
     .question-box { background-color: #333; color: white; padding: 15px; border-radius: 8px; font-size: 18px; line-height: 1.6; }
     .choices { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-    
+
 .choices button {
   padding: 15px;
   font-size: 16px;
@@ -53,8 +53,16 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: 0.2s;
 }
+
+.choices button:hover {
+   background-color: darkblue;
+    box-shadow: 0px 2px 4px rgba(27, 39, 63, 0.4);
+    color: gray;
+    transform: translateY(-1px);
+}
+
 /* 정답 효과: 하얗게 빛나고 초록 드롭섀도우 */
 @keyframes correctEffect {
   0% {

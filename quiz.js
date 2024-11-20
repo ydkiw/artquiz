@@ -60,6 +60,7 @@ async function callGPT(prompt) {
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
+      
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${userApiKey}`,
@@ -69,6 +70,7 @@ async function callGPT(prompt) {
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 150,
         temperature: 0.7,
+        
       }),
     });
 
@@ -94,15 +96,17 @@ async function loadQuestions() {
       // 중복되지 않는 질문 생성
       while (!questionContent || usedPrompts.has(questionContent)) {
         const prompt = `
-          당신은 예술작품 퀴즈를 만드는 전문가입니다. 아래의 작품에 대해 다양한 주제를 포함한 퀴즈를 만들어 주세요.
+          당신은 예술작품 퀴즈를 만드는 전문가입니다. 
+          아래의 작품에 대해 다양한 주제를 포함한 퀴즈를 2문장으로 만들어 주세요.
   
           요구사항:
           1. 질문은 완성된 문장으로 작성하세요.
           2. 질문은 아래의 주제 중 하나와 관련이 있어야 합니다:
              - 작품의 제작 이유 또는 배경
-             - 작품의 작가와 그의 생애
+             - 작품의 작가의 생애
              - 작품의 시대적 특징
              - 작품과 관련된 역사적 사건
+             - 작품과 관련된 루머
           3. 정답을 포함한 총 3개의 선택지를 제공해 주세요.
           4. 정답은 항상 무작위의 선택지에 위치해 있어야 합니다.
   
