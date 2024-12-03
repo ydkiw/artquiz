@@ -7,7 +7,7 @@ const usedPrompts = new Set(); // 중복 방지용 세트
 
 // 초기화: 첫 로드 시 오버레이 숨기기
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('countdown-overlay').style.display = 'none';
+
   document.getElementById('game-screen').style.display = 'none';
 });
 
@@ -23,16 +23,22 @@ document.getElementById('api-key-submit').addEventListener('click', async () => 
     return;
   }
 
+  // 시작 화면 숨기기
   document.getElementById('api-key-screen').style.display = 'none';
-  document.getElementById('countdown-overlay').style.display = 'flex'; // 카운트다운 오버레이 표시
+
+  // 게임 화면 표시
+  document.getElementById('game-screen').style.display = 'block';
+
+  // 카운트다운 오버레이 표시
+  document.getElementById('countdown-overlay').style.display = 'flex';
 
   startCountdown(() => {
     document.getElementById('countdown-overlay').style.display = 'none';
     quizStartTime = new Date(); // 퀴즈 시작 시간 기록
-    document.getElementById('game-screen').style.display = 'block'; // 게임 화면 표시
     loadQuestions(); // 질문 로드
   });
 });
+
 
 // 키보드 이벤트 리스너 추가 (엔터키로 API 키 제출 가능)
 document.getElementById('api-key-input').addEventListener('keypress', (event) => {
@@ -57,6 +63,7 @@ function startCountdown(callback) {
   }, 1000);
 }
 
+document.getElementById('countdown-overlay').style.display = 'none';
 // GPT 요청 함수
 async function callGPT(prompt) {
   try {
@@ -126,26 +133,36 @@ function generateQuizPrompt(artwork) {
 
   return `
     당신은 예술작품 퀴즈를 만드는 전문가입니다. 
-    다음 조건을 충족하며 흥미로운 퀴즈를 만들어주세요.
+    다음 조건을 충족하며 정확하고 사실에 기반한 흥미로운 퀴즈를 만들어주세요.
 
+    작품 정보:
     - 작품 이름: ${artwork.prompt}
-    - 이미지: ${artwork.image}
+    - 작품 이미지 경로: ${artwork.image}
     - 주제: ${randomTopic}
 
     요구사항:
-    1. 질문은 완성된 두 문장으로 작성하세요.
-    2. 정답은 사실에 기반해야 하며, 총 4개의 선택지를 제공하세요.
-    3. 선택지 중 하나는 재미있거나 말이 안 되는 오답이어야 합니다.
-    4. 선택지는 완성된 한 문장으로 작성하세요.
+    1. 질문은 완성된 두 문장의 의문문으로 작성하세요. 질문은 명확하고 구체적으로 서술하세요.
+    2. 정답은 반드시 하나의 선택지가 있어야 하며, 역사적 사실이나 공인된 정보에 기반해야 합니다.
+    3. 정답 이외의 선택지 중 하나는 재미있거나 비현실적인 오답이어야 하며, 나머지 두 개의 오답은 사실과 비슷하지만 틀린 정보여야 합니다.
+    4. 각 선택지는 질문에 관련되어야 하며, 한 문장으로 작성하세요. 선택지는 다음 형식을 따르세요:
+       - [선택지 텍스트]
+    5. 응답 형식은 다음과 같아야 합니다:
 
-    퀴즈 형식은 다음과 같아야 합니다:
-    질문: [질문을 입력하세요]
+    질문: [질문 텍스트]
     - [선택지 1]
     - [선택지 2]
     - [선택지 3]
     - [선택지 4]
+
+    예:
+    질문: 모나리자의 배경에 있는 풍경은 무엇을 나타내나요?
+    - 이탈리아의 한 도시를 표현한 것이다.
+    - 레오나르도 다빈치의 상상 속 세계를 묘사한 것이다.
+    - 당시 유럽에서 가장 높은 산맥 중 하나를 그린 것이다.
+    - 달에 대한 미래 상상을 나타낸 것이다.
   `;
 }
+
 
 
 // 질문 데이터 파싱 함수

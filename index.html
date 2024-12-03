@@ -31,42 +31,40 @@
       overflow: hidden;
     }
 
-    /* 수평 배치를 위한 컨테이너 스타일 */
-    .horizontal-container {
+    /* 로고 이미지 스타일 */
+    .logo-image {
+      width: 500px;
+      margin-bottom: 10px;
+    }
+
+    /* 입력칸과 버튼을 묶는 큰 박스 스타일 */
+    .form-container {
       display: flex;
-      flex-direction: row; /* 가로 정렬 */
-      align-items: center; /* 세로 중앙 정렬 */
-      justify-content: space-between; /* 요소 간격 균등 배치 */
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      gap: 20px;
+      max-width: 800px;
       width: 100%;
-      max-width: 1200px;
-      margin: 0 auto; /* 화면 중앙 배치 */
-      padding: 20px;
-      gap: 20px; /* 요소 간격 */
     }
-
-    /* 제목 스타일 */
-    .title-box {
-      flex: 1; /* 넓이 비율 */
-      text-align: right; /* 텍스트를 오른쪽 정렬 */
-    }
-
-    /* 입력 필드 섹션 */
+    /* 이름과 참가번호 입력칸 */
     .input-section {
-      flex: 2; /* 넓이 비율 */
       display: flex;
       flex-direction: column; /* 세로 정렬 */
-      align-items: flex-start; /* 왼쪽 정렬 */
-      gap: 10px;
+      gap: 10px; /* 입력칸 간격 */
     }
 
-    /* 시작 버튼 섹션 */
+
+    /* 시작 버튼 */
     .button-container {
-      flex: 1; /* 넓이 비율 */
       display: flex;
-      flex-direction: column;
-      align-items: center; /* 버튼을 가운데 정렬 */
-      gap: 15px;
+      align-items: center; /* 버튼 세로 정렬 */
     }
+
 
     /* 시작 버튼 */
     .start-button {
@@ -80,14 +78,27 @@
     }
 
     #api-key-screen, #game-screen, #countdown-overlay { display: none; }
-    #api-key-screen {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+
+#api-key-screen {
+  background-image: url('startscreen.webp'); /* 시작 화면 배경 이미지 */
+  background-size: cover; /* 배경 이미지 전체 채우기 */
+  background-position: center; /* 배경 이미지 중앙 정렬 */
+  background-repeat: no-repeat; /* 배경 이미지 반복 방지 */
+  width: 100vw; /* 뷰포트 너비 */
+  height: 100vh; /* 뷰포트 높이 */
+  display: flex; /* 중앙 정렬을 위한 flex 사용 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+}
+    
+    #game-screen {
+      background-image: url('background.webp');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 100vh; /* 화면 전체 차지 */
+      display: none; /* 기본적으로 숨김 */
     }
-    #game-screen { flex: 1; }
 
     /* 공통 스타일 */
 
@@ -212,21 +223,14 @@
 
 
 
-    /* 전체 시작 화면 스타일 */
     .start-screen {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f0f8ff; /* 부드러운 하늘색 배경 */
+      flex-direction: column; /* 여전히 세로 정렬 */
+      justify-content: center; /* 수직 중앙 정렬 유지 */
+      align-items: center; /* 가로 중앙 정렬 유지 */
+      height: auto;
     }
 
-    /* 제목 박스 */
-    .title-box {
-      text-align: center;
-      margin-bottom: 20px;
-    }
 
     .main-title {
       font-size: 3rem;
@@ -239,16 +243,15 @@
       color: #f76c6c; /* 강조 색상 */
     }
 
-    /* 입력창 스타일 */
+    /* 입력칸 스타일 */
     .input-box {
       padding: 10px;
       font-size: 1.2rem;
-      width: 80%;
-      max-width: 400px;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 300px; /* 입력창 너비 제한 */
+      border: 2px solid #ccc; /* 테두리 */
+      border-radius: 8px; /* 모서리 둥글게 */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 */
     }
 
     /* 버튼 스타일 */
@@ -357,13 +360,12 @@
 <body>
 
 <div id="api-key-screen" class="start-screen">
-  <div class="horizontal-container">
-    <!-- 제목 -->
-    <div class="title-box">
-      <h1 class="main-title">AI<br><span>ART QUIZ</span></h1>
-    </div>
+  <!-- 로고 이미지 -->
+  <img src="logo.png" alt="로고" class="logo-image">
 
-    <!-- 이름과 참가번호 입력 -->
+  <!-- 입력칸과 버튼을 포함하는 박스 -->
+  <div class="form-container">
+    <!-- 이름과 참가번호 입력칸 -->
     <div class="input-section">
       <input type="text" id="user-name-input" placeholder="이름을 입력해주세요" class="input-box">
       <input type="text" id="api-key-input" placeholder="참가번호를 입력해주세요" class="input-box">
@@ -372,12 +374,16 @@
     <!-- 시작 버튼 -->
     <div class="button-container">
       <button id="api-key-submit" class="start-button">START ▶</button>
-      <div class="links">
-        <a href="https://outstanding-nitrogen-37e.notion.site/api-1238fee049fb80059437e6db855eb5f1">참가번호 확인하기</a>
-      </div>
     </div>
   </div>
+
+  <!-- 링크 -->
+  <div class="links">
+    <a href="https://outstanding-nitrogen-37e.notion.site/api-1238fee049fb80059437e6db855eb5f1">참가코드 확인하기</a>
+  </div>
 </div>
+
+
 
 
 <div id="countdown-overlay">3</div>
