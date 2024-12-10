@@ -5,18 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>미술품 퀴즈 게임</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f0f0f0;
-      background-image: url('background.webp'); /* 배경 이미지 경로 */
-      background-size: cover; /* 화면 전체에 맞춤 */
-      background-position: center; /* 이미지 중앙 정렬 */
-      background-repeat: no-repeat; /* 이미지 반복 제거 */
+    @font-face {
+    font-family: 'NEXON Lv1 Gothic OTF';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv1 Gothic OTF.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+  font-family: 'NEXON Lv1 Gothic OTF';
+  display: flex;
+  flex-direction: column; /* 세로 방향 배치 */
+  justify-content: center; /* 수직 중앙 정렬 */
+  align-items: center; /* 수평 중앙 정렬 */
+  height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0;
+  background-image: url('background.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+    #art-image { 
+      max-width: 90%; 
+      max-height: 90%; 
+      border-radius: 8px;
+      
+      /* 테두리 액자 설정 */
+      border: 30px solid transparent;
+      border-image: url('frame.png') 100 stretch;
     }
 
     .container {
@@ -25,16 +43,17 @@
       width: 90%;
       max-width: 1000px;
       height: 80%;
-      background-color: #ffffff;
+      background-color: transparent; /* 배경색 투명 */
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       overflow: hidden;
     }
 
+
     /* 로고 이미지 스타일 */
     .logo-image {
       width: 500px;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
 
     /* 입력칸과 버튼을 묶는 큰 박스 스타일 */
@@ -47,7 +66,7 @@
       padding: 20px 40px;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      gap: 20px;
+      gap: 50px;
       max-width: 800px;
       width: 100%;
     }
@@ -79,85 +98,95 @@
 
     #api-key-screen, #game-screen, #countdown-overlay { display: none; }
 
-#api-key-screen {
-  background-image: url('startscreen.webp'); /* 시작 화면 배경 이미지 */
-  background-size: cover; /* 배경 이미지 전체 채우기 */
-  background-position: center; /* 배경 이미지 중앙 정렬 */
-  background-repeat: no-repeat; /* 배경 이미지 반복 방지 */
-  width: 100vw; /* 뷰포트 너비 */
-  height: 100vh; /* 뷰포트 높이 */
-  display: flex; /* 중앙 정렬을 위한 flex 사용 */
-  justify-content: center; /* 가로 중앙 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
-}
-    
+    #api-key-screen {
+      background-image: url('startscreen.webp'); /* 시작 화면 배경 이미지 */
+      background-size: cover; /* 배경 이미지 전체 채우기 */
+      background-position: center; /* 배경 이미지 중앙 정렬 */
+      background-repeat: no-repeat; /* 배경 이미지 반복 방지 */
+      width: 100vw; /* 뷰포트 너비 */
+      height: 100vh; /* 뷰포트 높이 */
+      display: flex; /* 중앙 정렬을 위한 flex 사용 */
+      justify-content: center; /* 가로 중앙 정렬 */
+      align-items: center; /* 세로 중앙 정렬 */
+    }
+        
     #game-screen {
-      background-image: url('background.webp');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
       height: 100vh; /* 화면 전체 차지 */
       display: none; /* 기본적으로 숨김 */
     }
 
     /* 공통 스타일 */
 
-    .content { 
-      display: flex; 
-      flex: 1; 
-    }
+.content {
+  display: flex;
+  flex-direction: row; /* 기본적으로 가로 정렬 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  position: absolute; /* 화면에 고정 */
+  top: 40%; /* 세로 중앙 위치 */
+  left: 50%; /* 가로 중앙 위치 */
+  transform: translate(-50%, -50%); /* 정확히 중앙으로 이동 */
+  width: 80%; /* 필요에 따라 조정 가능 */
+  height: auto; /* 내용에 따라 높이 조정 */
+}
 
     .left-section { 
       flex: 2; 
       display: flex; 
       justify-content: center; 
       align-items: center; 
-      background-color: #eeeeee; 
     }
 
     .left-section img { 
+      margin-top: 100px;
       max-width: 90%; 
       max-height: 90%; 
       border-radius: 8px; 
     }
 
     .right-section { 
+      margin-top: 100px;
       flex: 3; 
       padding: 20px; 
     }
 
     .question-box { 
-      background-color: #333; 
-      color: white; 
-      padding: 15px; 
+      font-weight: bold;
+      background-color: white; 
+      color: black; 
+      padding: 30px; 
       border-radius: 8px; 
       font-size: 18px; 
       line-height: 1.6; 
     }
 
     .choices { 
+      font-family: 'NEXON Lv1 Gothic OTF';
+      font-weight: 300;
       display: flex; 
       flex-direction: column; 
       gap: 15px; 
       margin-top: 20px; 
     }
 
-    .choices button {
-      padding: 15px;
-      font-size: 16px;
-      background-color: #444;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.2s;
-      }
+.choices button {
+    font-family: 'NEXON Lv1 Gothic OTF'; /* 폰트 명시 */
+    font-weight: 300; /* 선택적으로 가벼운 폰트 무게 지정 */
+    padding: 15px;
+    font-size: 16px;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+}
 
-    .choices button:hover {
-        box-shadow: 0px 2px 4px rgba(27, 39, 63, 0.4);
-        color: gray;
-        transform: translateY(-1px);
-      }
+.choices button:hover {
+    box-shadow: 0px 2px 4px rgba(27, 39, 63, 0.4);
+    background-color: gray;
+    transform: translateY(-1px);
+}
 
 
     @keyframes correctEffect {
@@ -221,16 +250,13 @@
       font-weight: bold;
     }
 
-
-
     .start-screen {
       display: flex;
-      flex-direction: column; /* 여전히 세로 정렬 */
+      flex-direction: column; /* 세로 정렬 */
       justify-content: center; /* 수직 중앙 정렬 유지 */
       align-items: center; /* 가로 중앙 정렬 유지 */
       height: auto;
     }
-
 
     .main-title {
       font-size: 3rem;
@@ -275,15 +301,23 @@
       margin-top: 20px;
     }
 
-    .links a {
-      text-decoration: none;
-      color: #007bff; /* 파란색 */
-      font-size: 1rem;
-    }
+   .links a {
+  display: inline-block; /* 링크를 블록처럼 취급 */
+  text-decoration: none; /* 밑줄 제거 */
+  color: white; /* 텍스트 색상 */
+  font-size: 1rem; /* 글자 크기 */
+  background-color: #007bff; /* 배경색 (파란색) */
+  padding: 10px 20px; /* 내부 여백 */
+  border-radius: 8px; /* 모서리 둥글게 */
+  transition: background-color 0.3s, transform 0.2s; /* 애니메이션 */
+  text-align: center; /* 텍스트 중앙 정렬 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 그림자 */
+}
 
-    .links a:hover {
-      text-decoration: underline;
-    }
+.links a:hover {
+  background-color: #0056b3; /* 호버 시 어두운 파란색 */
+  transform: scale(1.05); /* 살짝 확대 */
+}
 
     /* 퀴즈 완료 시 오버레이 스타일 */
     .overlay {
@@ -301,12 +335,11 @@
 
     /* 결과 화면 컨테이너 */
     .result-container {
-      background-color: #fff;
+      background-color: white;
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       text-align: center;
-      font-family: Arial, sans-serif;
       max-width: 600px;
       width: 90%;
     }
@@ -354,6 +387,107 @@
       background-color: #45a049;
     }
 
+#result-screen {
+  background-color: white;
+  border-radius: 12px;
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 90%;
+}
+
+#result-container {
+  position: relative;
+  text-align: center;
+  padding: 20px;
+}
+
+#ranking-div {
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 1500px;
+  margin: 20px auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  overflow-y: auto; /* 스크롤 가능 */
+  max-height: 80vh; /* 높이 제한 */
+  position: relative; /* 닫기 버튼 위치 고정을 위한 부모 설정 */
+}
+
+/* 닫기 버튼 스타일 */
+.close-ranking-button {
+  position: fixed; /* 화면 기준으로 고정 */
+  bottom: 20px; /* 화면 아래에서 20px 떨어짐 */
+  left: 50%; /* 수평 중심 정렬 */
+  transform: translateX(-50%); /* 가운데 정렬을 위해 X축 이동 */
+  
+  background-color: #ffffff; /* 흰색 배경 */
+  border: 1px solid #cccccc; /* 연한 회색 테두리 */
+  padding: 10px 15px; /* 버튼 내부 여백 */
+  border-radius: 8px; /* 버튼 모서리 둥글게 */
+  font-size: 1.2rem; /* 글자 크기 */
+  font-weight: bold; /* 굵은 글씨 */
+  color: #333; /* 텍스트 색상 */
+  cursor: pointer; /* 커서 변경 */
+  z-index: 1000; /* 다른 요소 위에 표시 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+  transition: transform 0.2s, color 0.2s, background-color 0.2s; /* 애니메이션 */
+}
+
+.close-ranking-button:hover {
+  background-color: #f0f0f0; /* 호버 시 밝은 회색 */
+  color: #e74c3c; /* 호버 시 텍스트 빨간색 */
+  transform: translate(-50%, -10%); /* 살짝 위로 이동 */
+}
+
+
+
+
+/* 순위 리스트 영역 */
+#ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* 항목 간 간격 */
+  margin-top: 20px;
+}
+
+/* 순위 항목 (한 줄) */
+.ranking-item {
+  display: flex;
+  justify-content: space-between; /* 순위, 이름, 시간이 균등하게 나뉨 */
+  align-items: center;
+  gap: 20px;
+  padding: 10px;
+  width: 100%;
+}
+
+/* 순위, 이름, 시간 각각의 박스 */
+.ranking-rank,
+.ranking-name,
+.ranking-time {
+  background-color: #eeeeee; /* 박스 배경색 */
+  color: #333333; /* 텍스트 색상 */
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 5px 50px; /* 내부 여백 */
+  border-radius: 8px; /* 둥근 모서리 */
+  flex: 1; /* 동일 비율로 크기 조정 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+}
+
+#quiz-complete-box {
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  text-align: center;
+  padding: 20px;
+  margin-bottom: 20px; /* 결과창과 간격 추가 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 90%;
+}
 
   </style>
 </head>
@@ -368,7 +502,7 @@
     <!-- 이름과 참가번호 입력칸 -->
     <div class="input-section">
       <input type="text" id="user-name-input" placeholder="이름을 입력해주세요" class="input-box">
-      <input type="text" id="api-key-input" placeholder="참가번호를 입력해주세요" class="input-box">
+      <input type="text" id="api-key-input" placeholder="참가코드를 입력해주세요" class="input-box">
     </div>
 
     <!-- 시작 버튼 -->
@@ -379,10 +513,13 @@
 
   <!-- 링크 -->
   <div class="links">
-    <a href="https://outstanding-nitrogen-37e.notion.site/api-1238fee049fb80059437e6db855eb5f1">참가코드 확인하기</a>
+    <a href="https://outstanding-nitrogen-37e.notion.site/api-1238fee049fb80059437e6db855eb5f1"
+    target="_blank">참가코드 확인하기</a>
   </div>
 </div>
 
+<audio id="background-music" src="background-music.mp3" loop></audio>
+<audio id="effect-sound" src="effect.mp3"></audio>
 
 
 
@@ -392,7 +529,7 @@
 
   <div class="content">
     <div class="left-section">
-      <img src="" alt="미술품 이미지" id="art-image">
+      <img src="basic.jpg" alt="미술품 이미지" id="art-image">
     </div>
     <div class="right-section">
       <div class="question-box" id="question">퀴즈 내는 중. . .</div>
@@ -405,6 +542,31 @@
     </div>
   </div>
 </div>
+
+<div id="ranking-div" style="display: none;">
+  <button class="close-ranking-button" onclick="toggleRanking()">×</button>
+
+  <h2>전체 순위</h2>
+  <div id="ranking-list">
+    <!-- 순위 1위 -->
+    <div class="ranking-item">
+      <div class="ranking-rank">1위</div>
+      <div class="ranking-name">중현님</div>
+      <div class="ranking-time">22초</div>
+    </div>
+    <!-- 순위 2위 -->
+    <div class="ranking-item">
+      <div class="ranking-rank">2위</div>
+      <div class="ranking-name">병학님</div>
+      <div class="ranking-time">33초</div>
+    </div>
+        <button class="close-ranking-button" onclick="toggleRanking()">×</button>
+    <!-- 순위는 동적으로 추가됨 -->
+  </div>
+
+</div>
+
+
 
 <script src="quiz.js" type="text/javascript">
 

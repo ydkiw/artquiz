@@ -35,9 +35,21 @@ document.getElementById('api-key-submit').addEventListener('click', async () => 
   startCountdown(() => {
     document.getElementById('countdown-overlay').style.display = 'none';
     quizStartTime = new Date(); // 퀴즈 시작 시간 기록
-    loadQuestions(); // 질문 로드
+
+    // 퀴즈 데이터를 랜덤으로 섞기
+    shuffleArray(quizData);
+
+    // 질문 로드
+    loadQuestions();
+    
   });
+  const bgMusic = document.getElementById('background-music');
+  if (bgMusic) {
+    bgMusic.volume = 0.5;
+    bgMusic.play().catch(error => console.error('배경음악 재생 오류:', error));
+  }
 });
+
 
 
 // 키보드 이벤트 리스너 추가 (엔터키로 API 키 제출 가능)
@@ -105,8 +117,11 @@ const quizData = [
   { prompt: "모나리자와 관련된 퀴즈를 만들어주세요.", image: "monalisa.jpg" },
   { prompt: "진주 귀고리를 한 소녀와 관련된 퀴즈를 만들어주세요.", image: "pearl_earring.jpg" },
   { prompt: "별이 빛나는 밤과 관련된 퀴즈를 만들어주세요.", image: "starry.jpg" },
-  { prompt: "인왕제색도와 관련된 퀴즈를 만들어주세요.", image: "inwang.jpg" },
+  { prompt: "정선의 인왕제색도와 관련된 퀴즈를 만들어주세요.", image: "inwang.jpg" },
   { prompt: "절규와 관련된 퀴즈를 만들어주세요.", image: "scream.jpg" },
+  { prompt: "게르니카와 관련된 퀴즈를 만들어주세요.", image: "gernika.jpg" },
+  { prompt: "구스타프 클림트의 키스와 관련된 퀴즈를 만들어주세요.", image: "kiss.jpg" },
+  { prompt: "이삭 줍는 여인들과 관련된 퀴즈를 만들어주세요.", image: "issac.jpg" },
 ];
 
 function shuffleQuizData() {
@@ -125,7 +140,9 @@ function generateQuizPrompt(artwork) {
     '작품의 시대적 특징',
     '작품과 관련된 역사적 사건',
     '작품과 관련된 루머',
-    '연관된 다른 작품'
+    '작품의 특징',
+    '작품의 제작 기법',
+    '작품의 재료'
   ];
 
   // 랜덤하게 주제 선택
@@ -280,6 +297,7 @@ function checkAnswer(selectedIndex) {
       }
     }, 1000);
   }
+  
 }
 
 // 퀴즈 종료
@@ -287,6 +305,12 @@ function endQuiz() {
   if (!quizStartTime) {
     console.error("Error: quizStartTime is not initialized.");
     return;
+  }
+  
+  const effectSound = document.getElementById('effect-sound');
+  if (effectSound) {
+    effectSound.volume = 0.7;
+    effectSound.play().catch(error => console.error('효과음 재생 오류:', error));
   }
 
   const quizEndTime = new Date();
@@ -300,50 +324,91 @@ function endQuiz() {
   const minutes = Math.floor(timeTaken / 60);
   const seconds = timeTaken % 60;
 
-  // 랭킹 계산
-  const rankingData = [
-    { threshold: 30, ranking: '1위 (ChatGPT급)', trophy: '🥇' },
-    { threshold: 60, ranking: '2위', trophy: '🥈' },
-    { threshold: 90, ranking: '3위', trophy: '🥉' },
-  ];
+  // 로컬 스토리지에서 기존 데이터 불러오기
+  let storedData = localStorage.getItem('quizResults') || '';
+  let results = storedData ? JSON.parse(storedData) : [];
 
-  let ranking = '참가자';
-  let trophy = '🏅';
+  // 현재 사용자 기록 추가
+  results.push({ name: userName, time: timeTaken });
 
-  for (const { threshold, ranking: r, trophy: t } of rankingData) {
-    if (timeTaken <= threshold) {
-      ranking = r;
-      trophy = t;
-      break;
-    }
-  }
+  // 시간 순서대로 정렬
+  results.sort((a, b) => a.time - b.time);
 
-  // 오버레이 배경과 결과 내용 추가
-  document.body.innerHTML = `
-    <div class="overlay">
-      <div class="result-container">
-        <h1>퀴즈 완료!</h1>
-        <p>소요 시간: <strong>${minutes > 0 ? `${minutes}분 ` : ''}${seconds}초</strong></p>
-        <p>🎉 ${userName}님, 당신은 ${ranking}입니다.</p>
-        <p style="font-size: 2rem;">${trophy}</p>
-        <div class="ranking-info">
-          <p>🏆 랭킹 기준:</p>
-          <ul>
-            <li>🥇 ~30초: 1위 (ChatGPT급)</li>
-            <li>🥈 ~60초: 2위</li>
-            <li>🥉 ~90초: 3위</li>
-            <li>🏅 90초 초과: 참가자</li>
-          </ul>
-        </div>
-        <button class="restart-button" onclick="restartQuiz()">다시 시작하기</button>
+  // 로컬 스토리지에 업데이트
+  localStorage.setItem('quizResults', JSON.stringify(results));
+
+  // 현재 사용자 순위 계산
+  const currentRank = results.findIndex(result => result.name === userName && result.time === timeTaken) + 1;
+
+  // 결과 화면 표시
+  let resultsHTML = `
+  <div id="quiz-complete-box">
+    <h1>퀴즈 완료!</h1>
+  </div>
+  <div id="result-screen">
+    <p>소요 시간: <strong>${minutes > 0 ? `${minutes}분 ` : ''}${seconds}초</strong></p>
+    <p>${userName}님, 당신은 <strong>${currentRank}위</strong>입니다.</p>
+    <button class="restart-button" onclick="toggleRanking()">전체 순위 보기</button>
+    <button class="restart-button" onclick="restartQuiz()">다시 시작하기</button>
+  </div>
+  <div id="ranking-div" style="display: none;">
+    <h2>전체 순위</h2>
+    <div id="ranking-list">
+`;
+
+  results.forEach((result, index) => {
+    resultsHTML += `
+      <div class="ranking-item">
+        <div class="ranking-rank">${index + 1}위</div>
+        <div class="ranking-name">${result.name}님</div>
+        <div class="ranking-time">${result.time}초</div>
       </div>
+    `;
+  });
+  
+  resultsHTML += `
+      </div>
+      <button class="close-ranking-button" onclick="toggleRanking()">닫기</button>
     </div>
   `;
+  
+
+  document.body.innerHTML = resultsHTML;
+
+  function endQuiz() {
+    // ... 기존 코드
+  
+    // 배경음악 정지
+    const bgMusic = document.getElementById('background-music');
+    if (bgMusic) {
+      bgMusic.pause();
+      bgMusic.currentTime = 0; // 음악 시작 위치로 되돌림
+    }
+  }
+  
+}
+
+// 순위 표시/닫기 기능
+function toggleRanking() {
+  const resultScreen = document.getElementById('result-screen');
+  const rankingDiv = document.getElementById('ranking-div');
+  
+  // 결과 화면 숨기고 순위 화면 표시 또는 반대로 동작
+  if (rankingDiv.style.display === 'none') {
+    resultScreen.style.display = 'none';
+    rankingDiv.style.display = 'block';
+    rankingDiv.style.height = '80vh'; // 순위가 길어질 경우 스크롤 표시
+    rankingDiv.style.overflowY = 'auto';
+  } else {
+    resultScreen.style.display = 'block';
+    rankingDiv.style.display = 'none';
+  }
 }
 
 function restartQuiz() {
   // 페이지를 새로고침하여 처음 화면으로 돌아가기
   location.reload();
 }
+
 
 
