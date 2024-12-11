@@ -398,7 +398,7 @@ function toggleRanking() {
 
     // 상단 텍스트를 "전체 순위"로 변경
     if (quizCompleteBox) {
-      quizCompleteBox.querySelector('h1').innerText = '전체 순위';
+      quizCompleteBox.querySelector('h1').innerText = 'Leaderboard';
     }
   } else {
     // 순위 화면 숨기고 결과 화면 표시
