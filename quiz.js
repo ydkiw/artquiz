@@ -306,7 +306,7 @@ function endQuiz() {
     console.error("Error: quizStartTime is not initialized.");
     return;
   }
-  
+
   const effectSound = document.getElementById('effect-sound');
   if (effectSound) {
     effectSound.volume = 0.7;
@@ -343,7 +343,7 @@ function endQuiz() {
   // 결과 화면 표시
   let resultsHTML = `
   <div id="quiz-complete-box">
-    <h1>퀴즈 완료!</h1>
+    <h1>퀴즈 완료!</h1> <!-- 기본 텍스트를 "퀴즈 완료!"로 설정 -->
   </div>
   <div id="result-screen">
     <p>소요 시간: <strong>${minutes > 0 ? `${minutes}분 ` : ''}${seconds}초</strong></p>
@@ -352,7 +352,7 @@ function endQuiz() {
     <button class="restart-button" onclick="restartQuiz()">다시 시작하기</button>
   </div>
   <div id="ranking-div" style="display: none;">
-    <h2>전체 순위</h2>
+
     <div id="ranking-list">
 `;
 
@@ -365,45 +365,53 @@ function endQuiz() {
       </div>
     `;
   });
-  
+
   resultsHTML += `
       </div>
       <button class="close-ranking-button" onclick="toggleRanking()">닫기</button>
     </div>
   `;
-  
 
   document.body.innerHTML = resultsHTML;
 
-  function endQuiz() {
-    // ... 기존 코드
-  
-    // 배경음악 정지
-    const bgMusic = document.getElementById('background-music');
-    if (bgMusic) {
-      bgMusic.pause();
-      bgMusic.currentTime = 0; // 음악 시작 위치로 되돌림
-    }
+  // 배경음악 정지
+  const bgMusic = document.getElementById('background-music');
+  if (bgMusic) {
+    bgMusic.pause();
+    bgMusic.currentTime = 0; // 음악 시작 위치로 되돌림
   }
-  
 }
+
 
 // 순위 표시/닫기 기능
 function toggleRanking() {
   const resultScreen = document.getElementById('result-screen');
   const rankingDiv = document.getElementById('ranking-div');
-  
-  // 결과 화면 숨기고 순위 화면 표시 또는 반대로 동작
+  const quizCompleteBox = document.getElementById('quiz-complete-box'); // 퀴즈 완료 텍스트 박스
+
   if (rankingDiv.style.display === 'none') {
+    // 결과 화면 숨기고 순위 화면 표시
     resultScreen.style.display = 'none';
     rankingDiv.style.display = 'block';
     rankingDiv.style.height = '80vh'; // 순위가 길어질 경우 스크롤 표시
     rankingDiv.style.overflowY = 'auto';
+
+    // 상단 텍스트를 "전체 순위"로 변경
+    if (quizCompleteBox) {
+      quizCompleteBox.querySelector('h1').innerText = '전체 순위';
+    }
   } else {
+    // 순위 화면 숨기고 결과 화면 표시
     resultScreen.style.display = 'block';
     rankingDiv.style.display = 'none';
+
+    // 상단 텍스트를 "퀴즈 완료!"로 복원
+    if (quizCompleteBox) {
+      quizCompleteBox.querySelector('h1').innerText = '퀴즈 완료!';
+    }
   }
 }
+
 
 function restartQuiz() {
   // 페이지를 새로고침하여 처음 화면으로 돌아가기
