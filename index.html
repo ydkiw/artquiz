@@ -150,15 +150,31 @@ body {
       padding: 20px; 
     }
 
-    .question-box { 
-      font-weight: bold;
-      background-color: white; 
-      color: black; 
-      padding: 30px; 
-      border-radius: 8px; 
-      font-size: 18px; 
-      line-height: 1.6; 
+    .question-box {
+      font-weight: 700;
+      color: black; /* 텍스트 색상 유지 */
+      font-size: 18px;
+      line-height: 1.4;
+
+      /* 수정된 스타일 */
+      background-image: url('quizframe.png'); /* 이미지 경로 */
+      background-size: 120% 125%; /* 이미지가 div 전체를 채우도록 조정 */
+      background-repeat: no-repeat; /* 이미지 반복 금지 */
+      background-position: center; /* 이미지 중앙 정렬 */
+      background-color: white;
+
+      /* 기존 스타일 조정 */
+      padding-right: 20;
+      padding-left: 20; /* 내부 여백 제거 */
+      display: flex; /* 텍스트를 중앙에 배치하기 위해 flex 사용 */
+      align-items: center; /* 세로 중앙 정렬 */
+      justify-content: center; /* 가로 중앙 정렬 */
+      box-sizing: border-box; /* 테두리를 포함한 크기 유지 */
+      text-align: center; /* 텍스트 중앙 정렬 */
+      height: 150px;
     }
+
+
 
     .choices { 
       font-family: 'NEXON Lv1 Gothic OTF';
@@ -503,6 +519,53 @@ body {
   width: 90%;
 }
 
+#volume-control {
+  position: fixed; /* 화면에 고정 */
+  bottom: 20px; /* 하단에서 20px 위 */
+  left: 35%; /* 중앙 정렬 */
+  transform: translateX(-50%); /* X축 이동으로 정확히 중앙 */
+  display: flex; /* 레이블과 슬라이더를 나란히 배치 */
+  align-items: center;
+  gap: 10px; /* 레이블과 슬라이더 간격 */
+  background-color: rgba(255, 255, 255, 0.9); /* 반투명 배경 */
+  padding: 10px 15px; /* 여백 추가 */
+  border-radius: 8px; /* 모서리 둥글게 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+}
+
+#volume-slider {
+  -webkit-appearance: none; /* 기본 브라우저 스타일 제거 */
+  appearance: none;
+  width: 200px; /* 슬라이더 너비 */
+  height: 10px; /* 슬라이더 높이 */
+  background: #ccc; /* 슬라이더 바 배경색 */
+  border: 2px solid #888; /* 네모난 테두리 */
+  border-radius: 4px; /* 네모난 스타일 유지 */
+  outline: none;
+  cursor: pointer;
+}
+
+#volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* 기본 브라우저 스타일 제거 */
+  appearance: none;
+  width: 20px; /* 조절 버튼 너비 */
+  height: 20px; /* 조절 버튼 높이 */
+  background: #555; /* 버튼 배경색 */
+  border: 2px solid #333; /* 버튼 테두리 */
+  cursor: pointer;
+  border-radius: 4px; /* 네모난 조절 버튼 */
+}
+
+#volume-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #555;
+  border: 2px solid #333;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+
   </style>
 </head>
 <body>
@@ -556,6 +619,19 @@ body {
     </div>
   </div>
 </div>
+
+<!-- 볼륨 슬라이더 -->
+<div id="volume-control">
+  <label for="volume-slider">🔊 볼륨</label>
+  <input type="range" id="volume-slider" min="0" max="100" value="50" />
+</div>
+
+<!-- 효과음 오디오 요소 -->
+<audio volume="0.8" id="start-sound" src="start.mp3"></audio>
+<audio volume="0.3" id="correct-sound" src="correct.mp3"></audio>
+<audio volume="0.3" id="wrong-sound" src="wrong.mp3"></audio>
+<audio id="complete-sound" src="game-complete.mp3"></audio>
+
 
 <div id="ranking-div" style="display: none;">
   <button class="close-ranking-button" onclick="toggleRanking()">×</button>

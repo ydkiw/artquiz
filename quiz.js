@@ -271,7 +271,26 @@ function loadQuestion() {
   });
 }
 
-// 정답 확인 로직
+// 효과음 요소 가져오기
+const startSound = document.getElementById('start-sound');
+const correctSound = document.getElementById('correct-sound');
+const wrongSound = document.getElementById('wrong-sound');
+const completeSound = document.getElementById('complete-sound');
+
+// 효과음 볼륨 설정 (0 ~ 1 사이의 값)
+startSound.volume = 1.0;  // 시작 버튼 효과음 볼륨 (30%)
+correctSound.volume = 0.3; // 정답 효과음 볼륨 (30%)
+wrongSound.volume = 0.3;  // 오답 효과음 볼륨 (30%)
+completeSound.volume = 0.3;
+
+
+// 시작 버튼 클릭 이벤트에 효과음 추가
+document.getElementById('api-key-submit').addEventListener('click', () => {
+  startSound.currentTime = 0; // 효과음을 처음부터 재생
+  startSound.play(); // 시작 버튼 효과음 재생
+});
+
+// 정답 확인 함수에 정답 효과음 추가
 function checkAnswer(selectedIndex) {
   const questionData = questions[currentQuestionIndex];
   const buttons = document.querySelectorAll('.choices button');
@@ -279,6 +298,10 @@ function checkAnswer(selectedIndex) {
   buttons.forEach(button => (button.disabled = true)); // 모든 버튼 비활성화
 
   if (selectedIndex !== questionData.correctAnswerIndex) {
+    // 오답 효과음
+    wrongSound.currentTime = 0;
+    wrongSound.play();
+
     buttons[selectedIndex].classList.add('wrong'); // 오답 시각 효과
     setTimeout(() => {
       buttons.forEach(button => {
@@ -287,18 +310,22 @@ function checkAnswer(selectedIndex) {
       });
     }, 2000);
   } else {
-    buttons[selectedIndex].classList.add('correct');
+    // 정답 효과음
+    correctSound.currentTime = 0;
+    correctSound.play();
+
+    buttons[selectedIndex].classList.add('correct'); // 정답 시각 효과
     setTimeout(() => {
       currentQuestionIndex++;
       if (currentQuestionIndex < questions.length) {
-        loadQuestion();
+        loadQuestion(); // 다음 질문 불러오기
       } else {
         endQuiz();
       }
     }, 1000);
   }
-  
 }
+
 
 // 퀴즈 종료
 function endQuiz() {
@@ -307,11 +334,11 @@ function endQuiz() {
     return;
   }
 
-  const effectSound = document.getElementById('effect-sound');
-  if (effectSound) {
-    effectSound.volume = 0.7;
-    effectSound.play().catch(error => console.error('효과음 재생 오류:', error));
-  }
+  // JavaScript에서 효과음 오디오 객체를 동적으로 생성
+  const completeSound = new Audio('game-complete.mp3'); // 게임 완료 효과음 경로
+  completeSound.volume = 0.5; // 볼륨 설정 (0~1)
+  completeSound.currentTime = 0; // 처음부터 재생
+  completeSound.play().catch(error => console.error('완료 효과음 재생 오류:', error));
 
   const quizEndTime = new Date();
   const timeTaken = Math.floor((quizEndTime - quizStartTime) / 1000);
@@ -342,19 +369,18 @@ function endQuiz() {
 
   // 결과 화면 표시
   let resultsHTML = `
-  <div id="quiz-complete-box">
-    <h1>퀴즈 완료!</h1> <!-- 기본 텍스트를 "퀴즈 완료!"로 설정 -->
-  </div>
-  <div id="result-screen">
-    <p>소요 시간: <strong>${minutes > 0 ? `${minutes}분 ` : ''}${seconds}초</strong></p>
-    <p>${userName}님, 당신은 <strong>${currentRank}위</strong>입니다.</p>
-    <button class="restart-button" onclick="toggleRanking()">전체 순위 보기</button>
-    <button class="restart-button" onclick="restartQuiz()">다시 시작하기</button>
-  </div>
-  <div id="ranking-div" style="display: none;">
-
-    <div id="ranking-list">
-`;
+    <div id="quiz-complete-box">
+      <h1>퀴즈 완료!</h1>
+    </div>
+    <div id="result-screen">
+      <p>소요 시간: <strong>${minutes > 0 ? `${minutes}분 ` : ''}${seconds}초</strong></p>
+      <p>${userName}님, 당신은 <strong>${currentRank}위</strong>입니다.</p>
+      <button class="restart-button" onclick="toggleRanking()">전체 순위 보기</button>
+      <button class="restart-button" onclick="restartQuiz()">다시 시작하기</button>
+    </div>
+    <div id="ranking-div" style="display: none;">
+      <div id="ranking-list">
+  `;
 
   results.forEach((result, index) => {
     resultsHTML += `
@@ -372,6 +398,7 @@ function endQuiz() {
     </div>
   `;
 
+  // body를 덮어쓰기
   document.body.innerHTML = resultsHTML;
 
   // 배경음악 정지
@@ -381,6 +408,8 @@ function endQuiz() {
     bgMusic.currentTime = 0; // 음악 시작 위치로 되돌림
   }
 }
+
+
 
 
 // 순위 표시/닫기 기능
@@ -418,5 +447,12 @@ function restartQuiz() {
   location.reload();
 }
 
+document.getElementById('volume-slider').addEventListener('input', (event) => {
+  const volume = event.target.value / 100; // 슬라이더 값 (0~100)을 0~1로 변환
+  const bgMusic = document.getElementById('background-music');
+  if (bgMusic) {
+    bgMusic.volume = volume; // 볼륨 조절
+  }
+});
 
 
